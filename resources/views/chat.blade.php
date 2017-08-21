@@ -20,15 +20,16 @@
 
 	<div class="container">
 		<div class="row" id="app">
-			<div class="offset-4 col-4">
+			<div class="col-md-offset-2 col-md-8">
 				<span class="list-group-item active">Chat Room</span>
 
 				<ul class="list-group" v-chat-scroll>
 
 					<message 
-						v-for="item in chat.messages" 
+						v-for="(item,index) in chat.messages"
 						:key=item.index
-						color='success'
+						:color=chat.colors[index]
+						:user=chat.users[index]
 					>
 						@{{ item }}
 					</message>

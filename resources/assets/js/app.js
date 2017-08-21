@@ -30,17 +30,37 @@ const app = new Vue({
     data: {
     	message: '',
     	chat: {
-    		messages: []
+    		messages: [],
+			users: [],
+            colors: []
     	}
     },
     methods: {
     	send() {
     		if (this.message.length != 0) {
-    			
-    			this.chat.messages.push(this.message);
 
-    			this.message = '';
+    			axios.post('/send', {
+    			    message: this.message
+			    })
+                .then(response => {
+                    this.chat.messages.push(this.message);
+                    this.chat.users.push('You');
+                    this.chat.colors.push('success');
+
+                    this.message = '';
+                })
+                .catch(error => {
+				    console.log(error);
+				});
     		}
     	}
-    }
+    },
+	mounted() {
+    	Echo.private('chat')
+			.listen('ChatEvent', (e) => {
+                this.chat.messages.push(e.message);
+                this.chat.users.push(e.user);
+                this.chat.colors.push('warning');
+			});
+	}
 });
