@@ -10909,23 +10909,45 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vue_
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('message', __webpack_require__(39));
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
-  el: '#app',
-  data: {
-    message: '',
-    chat: {
-      messages: []
-    }
-  },
-  methods: {
-    send: function send() {
-      if (this.message.length != 0) {
+    el: '#app',
+    data: {
+        message: '',
+        chat: {
+            messages: [],
+            users: []
+        }
+    },
+    methods: {
+        send: function send() {
+            var _this = this;
 
-        this.chat.messages.push(this.message);
+            if (this.message.length != 0) {
 
-        this.message = '';
-      }
+                this.chat.messages.push(this.message);
+                this.chat.users.push('you');
+
+                console.log(this.chat.messages);
+
+                axios.post('/send', {
+                    message: this.message
+                }).then(function (response) {
+                    _this.message = '';
+                }).catch(function (error) {
+
+                    console.log(error);
+                });
+            }
+        }
+    },
+    mounted: function mounted() {
+        var _this2 = this;
+
+        Echo.private('chat').listen('ChatEvent', function (e) {
+
+            _this2.chat.messages.push(e.message);
+            _this2.chat.users.push(e.user);
+        });
     }
-  }
 });
 
 /***/ }),
@@ -48045,7 +48067,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -48500,9 +48522,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-	props: ['color'],
+	props: ['color', 'user'],
 	computed: {
 		className: function className() {
 			return 'list-group-item-' + this.color;
@@ -48527,7 +48550,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
     staticClass: "badge float-right",
     class: _vm.badgeClass
-  }, [_vm._v("Test")])])
+  }, [_vm._v(_vm._s(_vm.user))])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
