@@ -32,8 +32,18 @@ const app = new Vue({
     	chat: {
     		messages: [],
 			users: [],
-            colors: []
-    	}
+            colors: [],
+            times: []
+    	},
+        typing: ''
+    },
+    watch: {
+        message() {
+            Echo.private('chat')
+                .whisper('typing', {
+                    name: this.message
+                });
+        }
     },
     methods: {
     	send() {
@@ -46,6 +56,7 @@ const app = new Vue({
                     this.chat.messages.push(this.message);
                     this.chat.users.push('You');
                     this.chat.colors.push('success');
+                    this.chat.times.push(this.getTime());
 
                     this.message = '';
                 })
@@ -53,7 +64,12 @@ const app = new Vue({
 				    console.log(error);
 				});
     		}
-    	}
+    	},
+        getTime() {
+    	    let time = new Date();
+
+    	    return time.getHours() + ':' + time.getMinutes();
+        }
     },
 	mounted() {
     	Echo.private('chat')
@@ -61,6 +77,15 @@ const app = new Vue({
                 this.chat.messages.push(e.message);
                 this.chat.users.push(e.user);
                 this.chat.colors.push('warning');
-			});
+                this.chat.times.push(this.getTime());
+			})
+            .listenForWhisper('typing', (e) => {
+
+                if (e.name != '') {
+                    this.typing = 'typing...';
+                } else {
+                    this.typing = '';
+                }
+            });
 	}
 });

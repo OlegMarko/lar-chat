@@ -10909,44 +10909,67 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vue_
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('message', __webpack_require__(39));
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
-  el: '#app',
-  data: {
-    message: '',
-    chat: {
-      messages: [],
-      users: [],
-      colors: []
-    }
-  },
-  methods: {
-    send: function send() {
-      var _this = this;
+    el: '#app',
+    data: {
+        message: '',
+        chat: {
+            messages: [],
+            users: [],
+            colors: [],
+            times: []
+        },
+        typing: ''
+    },
+    watch: {
+        message: function message() {
+            Echo.private('chat').whisper('typing', {
+                name: this.message
+            });
+        }
+    },
+    methods: {
+        send: function send() {
+            var _this = this;
 
-      if (this.message.length != 0) {
+            if (this.message.length != 0) {
 
-        axios.post('/send', {
-          message: this.message
-        }).then(function (response) {
-          _this.chat.messages.push(_this.message);
-          _this.chat.users.push('You');
-          _this.chat.colors.push('success');
+                axios.post('/send', {
+                    message: this.message
+                }).then(function (response) {
+                    _this.chat.messages.push(_this.message);
+                    _this.chat.users.push('You');
+                    _this.chat.colors.push('success');
+                    _this.chat.times.push(_this.getTime());
 
-          _this.message = '';
-        }).catch(function (error) {
-          console.log(error);
+                    _this.message = '';
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        getTime: function getTime() {
+            var time = new Date();
+
+            return time.getHours() + ':' + time.getMinutes();
+        }
+    },
+    mounted: function mounted() {
+        var _this2 = this;
+
+        Echo.private('chat').listen('ChatEvent', function (e) {
+            _this2.chat.messages.push(e.message);
+            _this2.chat.users.push(e.user);
+            _this2.chat.colors.push('warning');
+            _this2.chat.times.push(_this2.getTime());
+        }).listenForWhisper('typing', function (e) {
+
+            if (e.name != '') {
+                _this2.typing = 'typing...';
+            } else {
+                _this2.typing = '';
+            }
         });
-      }
     }
-  },
-  mounted: function mounted() {
-    var _this2 = this;
-
-    Echo.private('chat').listen('ChatEvent', function (e) {
-      _this2.chat.messages.push(e.message);
-      _this2.chat.users.push(e.user);
-      _this2.chat.colors.push('warning');
-    });
-  }
 });
 
 /***/ }),
@@ -48361,7 +48384,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n.time {\n    font-size: 85%;\n    color: #1c1c1c;\n}\n", ""]);
 
 // exports
 
@@ -48816,9 +48839,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-	props: ['color', 'user'],
+	props: ['color', 'user', 'time'],
 	computed: {
 		className: function className() {
 			return 'list-group-item-' + this.color;
@@ -48837,13 +48868,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('li', {
+  return _c('div', [_c('span', {
     staticClass: "list-group-item",
     class: _vm.className
   }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
     staticClass: "badge float-right",
     class: _vm.badgeClass
-  }, [_vm._v(_vm._s(_vm.user))])])
+  }, [_vm._v(_vm._s(_vm.user))]), _vm._v(" "), _c('span', {
+    staticClass: "badge float-right time"
+  }, [_vm._v(_vm._s(_vm.time))])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
