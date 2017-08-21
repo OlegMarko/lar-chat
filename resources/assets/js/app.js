@@ -14,8 +14,15 @@ window.Vue = require('vue');
  */
 
 import Vue from 'vue'
+
+// scroll auto scrool to button
 import VueChatScroll from 'vue-chat-scroll'
 Vue.use(VueChatScroll)
+
+// for notifications
+import Toaster from 'v-toaster'
+import 'v-toaster/dist/v-toaster.css'
+Vue.use(Toaster, {timeout: 5000})
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -35,7 +42,8 @@ const app = new Vue({
             colors: [],
             times: []
     	},
-        typing: ''
+        typing: '',
+        users: 0
     },
     watch: {
         message() {
@@ -86,6 +94,21 @@ const app = new Vue({
                 } else {
                     this.typing = '';
                 }
+            });
+
+    	Echo.join('chat')
+            .here((users) => {
+    	        this.users = users.length;
+            })
+            .joining((user) => {
+    	        this.users += 1;
+
+    	        this.$toaster.success(user.name + ' is joined the chat room');
+            })
+            .leaving((user) => {
+    	        this.users -= 1;
+
+    	        this.$toaster.warning(user.name + ' is leaved the chat room');
             });
 	}
 });

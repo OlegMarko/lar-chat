@@ -23,7 +23,7 @@
 	<div class="container">
 		<div class="row" id="app">
 			<div class="offset-3 col-6 offset-sm-1 col-sm-10">
-				<span class="list-group-item active">Chat Room</span>
+                <span class="list-group-item active">Chat Room <span class="badge badge-pill badge-danger">@{{ users }}</span></span>
                 <div class="badge badge-pill badge-primary">@{{ typing }}</div>
 
 				<ul class="list-group" v-chat-scroll>
