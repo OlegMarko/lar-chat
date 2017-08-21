@@ -3,7 +3,7 @@
 	<div>
 		<li class="list-group-item" :class="className"><slot></slot></li>
 
-		<small class="badge float-right" :class="badgeClass"></small>
+		<small class="badge float-right" :class="badgeClass">Test</small>
 	</div>
 </template>
 
