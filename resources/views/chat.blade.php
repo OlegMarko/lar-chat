@@ -7,6 +7,8 @@
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
 	<style type="text/css">
@@ -20,16 +22,18 @@
 
 	<div class="container">
 		<div class="row" id="app">
-			<div class="offset-md-2 col-md-8">
-				<span class="list-group-item active">Chat Room</span>
+			<div class="offset-3 col-6 offset-sm-1 col-sm-10">
+                <span class="list-group-item active">Chat Room <span class="badge badge-pill badge-danger">@{{ users }}</span></span>
+                <div class="badge badge-pill badge-primary">@{{ typing }}</div>
 
 				<ul class="list-group" v-chat-scroll>
 
 					<message 
-						v-for="item in chat.messages" 
+						v-for="(item,index) in chat.messages"
 						:key=item.index
-						color='success',
-						:user="123"
+						:color=chat.colors[index]
+						:user=chat.users[index]
+                        :time=chat.times[index]
 					>
 						@{{ item }}
 					</message>
